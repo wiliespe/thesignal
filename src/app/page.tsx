@@ -14,20 +14,25 @@ export default function SignalApp() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const simulateAnalysis = () => {
-    if (!url) return;
-    setLoading(true);
-    setTimeout(() => {
-      setResult({
-        name: "Analysis Success",
-        stack: "Next.js / TypeScript / Tailwind",
-        install: "npm i @signal/core",
-        arch: "User -> Edge Functions -> AI Processor -> Vector DB",
-        summary: "Arquitectura escalable basada en eventos con latencia mínima."
-      });
-      setLoading(false);
-    }, 2500);
-  };
+ const analyzeLink = async () => {
+  if (!url) return;
+  setLoading(true);
+  
+  try {
+    const response = await fetch('/api/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url }),
+    });
+    
+    const data = await response.json();
+    setResult(data);
+  } catch (err) {
+    console.error("Error analizando:", err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-[#09090b] text-zinc-100 font-mono p-6 selection:bg-emerald-500/30">
